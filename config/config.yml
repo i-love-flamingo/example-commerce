@@ -1,0 +1,30 @@
+flamingo.session.cookie.secure: false
+
+graphql:
+  introspectionEnabled: true
+
+commerce:
+  product:
+    fakeservice:
+      enabled: true
+  cart:
+    emailAdapter:
+      # The email where place order infos are send to:
+      emailAddress: lkklj@lkjkj.de
+  customer:
+    # Activate the nil customer adapter (that returns no infos about a logged in user :-))
+    useNilCustomerAdapter: true
+  category:
+    # Activate a simple category adapter that just returns the configured tree
+    useCategoryFixedAdapter: true
+    categoryServiceFixed:
+      tree:
+        category1:
+          code: category1
+          name: Category 1
+        category2:
+          code: category2
+          name: Category 2
+  payment:
+    # Include the basic payment gateway adapter that provides "offline" payment methods
+    enableOfflinePaymentGateway: true
