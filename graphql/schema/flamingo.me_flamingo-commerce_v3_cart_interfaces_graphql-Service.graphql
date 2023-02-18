@@ -1,0 +1,492 @@
+type Commerce_Cart_DecoratedCart {
+    cart: Commerce_Cart_Cart!
+    decoratedDeliveries: [Commerce_Cart_DecoratedDelivery!]
+    getDecoratedDeliveryByCode(deliveryCode: String!): Commerce_Cart_DecoratedDelivery
+    getAllPaymentRequiredItems: Commerce_Cart_PricedItems!
+    cartSummary: Commerce_Cart_Summary!
+}
+
+type Commerce_Cart_Summary {
+    discounts: Commerce_Cart_AppliedDiscounts!
+    sumAppliedDiscounts: Commerce_Price
+    sumAppliedGiftCards: Commerce_Price
+    sumGrandTotalWithGiftCards: Commerce_Price
+    sumTotalDiscountWithGiftCardsAmount: Commerce_Price
+    hasAppliedDiscounts: Boolean!
+    sumTaxes: Commerce_Cart_Taxes
+    sumPaymentSelectionCartSplitValueAmountByMethods(methods: [String!]): Commerce_Price
+}
+
+type Commerce_Cart_Cart {
+    id: ID!
+    entityID: String!
+    billingAddress: Commerce_Cart_Address
+    purchaser: Commerce_Cart_Person
+    deliveries: [Commerce_Cart_Delivery!]
+    additionalData: Commerce_Cart_AdditionalData!
+    paymentSelection: Commerce_Cart_PaymentSelection
+    belongsToAuthenticatedUser: Boolean!
+    authenticatedUserID: String!
+    appliedCouponCodes: [Commerce_Cart_CouponCode!]
+    defaultCurrency: String!
+    totalitems: [Commerce_Cart_Totalitem!]
+    itemCount: Int!
+    productCount: Int!
+    isPaymentSelected: Boolean!
+    grandTotal: Commerce_Price!
+    sumTotalTaxAmount: Commerce_Price!
+    subTotalNet: Commerce_Price!
+    appliedGiftCards: [Commerce_Cart_AppliedGiftCard!]
+    getDeliveryByCode(deliveryCode: String!): Commerce_Cart_Delivery
+    getDeliveryCodes: [String!]
+
+    getMainShippingEMail: String!
+    isEmpty: Boolean!
+    hasDeliveryForCode(deliveryCode: String!): Boolean!
+
+    getDeliveryByItemID(itemID: String!): Commerce_Cart_Delivery!
+    getByItemID(itemID: String!): Commerce_Cart_Item!
+    getTotalQty(marketPlaceCode: String!, variantCode: String!): Int
+    getByExternalReference(ref: String!): Commerce_Cart_Item!
+
+    getVoucherSavings: Commerce_Price!
+    getCartTeaser: Commerce_Cart_Teaser!
+
+    sumShippingNet: Commerce_Price!
+    sumShippingNetWithDiscounts: Commerce_Price!
+    sumShippingGross: Commerce_Price!
+    sumShippingGrossWithDiscounts: Commerce_Price!
+
+    hasShippingCosts: Boolean!
+    allShippingTitles: [String!]
+
+    subTotalGross: Commerce_Price!
+    subTotalGrossWithDiscounts: Commerce_Price!
+    subTotalNetWithDiscounts: Commerce_Price!
+    sumTotalDiscountAmount: Commerce_Price!
+    sumNonItemRelatedDiscountAmount: Commerce_Price!
+    sumItemRelatedDiscountAmount: Commerce_Price!
+    hasAppliedCouponCode: Boolean!
+
+    getPaymentReference: String!
+    getTotalItemsByType(typeCode: String!): [Commerce_Cart_Totalitem!]
+    grandTotalCharges: Commerce_Price_Charges!
+
+    hasAppliedGiftCards: Boolean!
+    hasRemainingGiftCards: Boolean!
+}
+
+type Commerce_Cart_PricedItems {
+    cartItems:  [Commerce_Cart_PricedCartItem!]
+    shippingItems:  [Commerce_Cart_PricedShippingItem!]
+    totalItems: [Commerce_Cart_PricedTotalItem!]
+}
+
+type Commerce_Cart_PricedCartItem {
+    amount: Commerce_Price!
+    itemID: String!
+}
+
+type Commerce_Cart_PricedShippingItem {
+    amount: Commerce_Price!
+    deliveryInfoCode: String!
+}
+
+type Commerce_Cart_PricedTotalItem {
+    amount: Commerce_Price!
+    code: String!
+}
+
+type Commerce_Cart_Tax {
+    amount: Commerce_Price!
+    type: String!
+    rate: Float
+}
+
+type Commerce_Cart_Taxes {
+    items: [Commerce_Cart_Tax]!
+    getByType(taxType: String): Commerce_Cart_Tax!
+}
+
+type Commerce_Cart_Teaser {
+    productCount:  Int
+    ItemCount:     Int
+    DeliveryCodes: [String]
+}
+
+interface Commerce_Cart_PaymentSelection {
+    gateway: String!
+    totalValue: Commerce_Price!
+    cartSplit: [Commerce_Cart_PaymentSelection_Split!]
+}
+
+type Commerce_Cart_PaymentSelection_Split {
+    qualifier: Commerce_Cart_PaymentSelection_SplitQualifier!
+    charge: Commerce_Price_Charge!
+}
+
+type Commerce_Cart_PaymentSelection_SplitQualifier {
+    type: String!
+    method: String!
+    reference: String!
+}
+
+type Commerce_Cart_DefaultPaymentSelection implements Commerce_Cart_PaymentSelection {
+    gateway: String!
+    totalValue: Commerce_Price!
+    cartSplit: [Commerce_Cart_PaymentSelection_Split!]
+}
+
+type Commerce_Cart_DecoratedDelivery {
+    delivery: Commerce_Cart_Delivery!
+    decoratedItems: [Commerce_Cart_DecoratedItem!]
+}
+
+type Commerce_Cart_Delivery {
+    deliveryInfo: Commerce_Cart_DeliveryInfo
+    cartitems: [Commerce_Cart_Item!]
+    shippingItem: Commerce_Cart_ShippingItem
+    subTotalGross: Commerce_Price
+    grandTotal: Commerce_Price
+    sumTotalTaxAmount: Commerce_Price
+    subTotalNet: Commerce_Price
+    sumTotalDiscountAmount: Commerce_Price
+    sumNonItemRelatedDiscountAmount: Commerce_Price
+    sumItemRelatedDiscountAmount: Commerce_Price
+    subTotalGrossWithDiscounts: Commerce_Price
+    subTotalNetWithDiscounts: Commerce_Price!
+    hasItems: Boolean!
+}
+
+type Commerce_Cart_DeliveryInfo {
+    code: String!
+    workflow: String!
+    method: String!
+    carrier: String!
+    deliveryLocation: Commerce_Cart_DeliveryLocation
+    desiredTime: Time
+    additionalData: Commerce_Cart_CustomAttributes!
+}
+
+type Commerce_Cart_DeliveryLocation  {
+    type: String!
+    address: Commerce_Cart_Address
+    useBillingAddress: Boolean!
+    code: String!
+}
+
+type Commerce_Cart_ShippingItem {
+    title: String!
+    priceNet: Commerce_Price!
+    taxAmount: Commerce_Price!
+    priceGross: Commerce_Price!
+    appliedDiscounts: Commerce_Cart_AppliedDiscounts!
+    totalWithDiscountInclTax: Commerce_Price!
+    tax: Commerce_Cart_Tax!
+}
+
+type Commerce_Cart_AppliedDiscounts {
+    items: [Commerce_Cart_AppliedDiscount!]
+    byCampaignCode(campaignCode: String):  Commerce_Cart_AppliedDiscounts!
+    byType(filterType: String): Commerce_Cart_AppliedDiscounts!
+}
+
+type Commerce_Cart_AppliedDiscount {
+    campaignCode:  String!
+    couponCode:    String!
+    label:         String!
+    applied:       Commerce_Price!
+    type:          String!
+    isItemRelated: Boolean!
+    sortOrder:     Int!
+}
+
+type Commerce_Cart_DecoratedItem {
+    item: Commerce_Cart_Item
+    product: Commerce_Product
+}
+
+type Commerce_Cart_Item {
+    id: ID!
+    externalReference: String!
+    marketplaceCode: String!
+    variantMarketPlaceCode: String!
+    productName: String!
+    sourceID: String!
+    qty: Int!
+    additionalDataKeys: [String!]
+    additionalDataValues: [String!]
+    getAdditionalData(key: String!): String
+    hasAdditionalDataKey(key: String!): Boolean
+    singlePriceGross: Commerce_Price!
+    singlePriceNet: Commerce_Price!
+    rowPriceGross: Commerce_Price!
+    rowPriceNet: Commerce_Price!
+    appliedDiscounts: Commerce_Cart_AppliedDiscounts!
+    #    rowTaxes: Commerce_Taxes!
+}
+
+type Commerce_Cart_Address {
+    vat:                    String!
+    firstname:              String!
+    lastname:               String!
+    middleName:             String!
+    title:                  String!
+    salutation:             String!
+    street:                 String!
+    streetNr:               String!
+    additionalAddressLines: [String!]
+    company:                String!
+    city:                   String!
+    postCode:               String!
+    state:                  String!
+    regionCode:             String!
+    country:                String!
+    countryCode:            String!
+    telephone:              String!
+    email:                  String!
+}
+
+type Commerce_Cart_Person {
+    address: Commerce_Cart_Address
+    personalDetails: Commerce_Cart_PersonalDetails!
+    existingCustomerData: Commerce_Cart_ExistingCustomerData
+}
+
+type Commerce_Cart_ExistingCustomerData {
+    id: ID!
+}
+
+type Commerce_Cart_PersonalDetails {
+    dateOfBirth: String!
+    passportCountry: String!
+    passportNumber: String!
+    nationality: String!
+}
+
+type Commerce_Cart_AdditionalData {
+    customAttributes: Commerce_Cart_CustomAttributes!
+    reservedOrderID: String!
+}
+
+type Commerce_Cart_CustomAttributes {
+    "Get specific attribute by key"
+    get(key: String!): Commerce_Cart_KeyValue
+}
+
+type Commerce_Cart_KeyValue {
+    key: String!
+    value: String!
+}
+
+type Commerce_Cart_Totalitem {
+    code: String!
+    title: String!
+    price: Commerce_Price!
+    type: String!
+}
+
+type Commerce_Cart_CouponCode {
+    code: String!
+}
+
+type Commerce_Cart_AppliedGiftCard {
+    code: String!
+    applied: Commerce_Price!
+    remaining: Commerce_Price!
+    hasRemaining: Boolean!
+}
+
+type Commerce_Cart_ValidationResult {
+    hasCommonError:        Boolean!
+    commonErrorMessageKey: String!
+    itemResults:           [Commerce_Cart_ItemValidationError!]
+}
+
+type Commerce_Cart_ItemValidationError {
+    itemID:          String!
+    errorMessageKey: String!
+}
+
+
+type Commerce_Cart_QtyRestrictionResult {
+    isRestricted:        Boolean!
+    maxAllowed:          Int!
+    remainingDifference: Int!
+    restrictorName:      String!
+}
+
+type Commerce_Cart_PlacedOrderInfo {
+    orderNumber:    String!
+    deliveryCode:   String!
+}
+
+type Commerce_Cart_BillingAddressForm {
+    "Billing address form data"
+    formData:       Commerce_Cart_AddressForm
+    "Validation of supplied billing address, empty if address is valid"
+    validationInfo: Commerce_Cart_Form_ValidationInfo
+    "Shows if the request was successfully processed"
+    processed: Boolean
+}
+
+type Commerce_Cart_SelectedPaymentResult {
+    validationInfo: Commerce_Cart_Form_ValidationInfo
+    processed: Boolean
+}
+
+type Commerce_Cart_Form_ValidationInfo {
+    "Field specific validation errors"
+    fieldErrors: [Commerce_Cart_Form_FieldError!]
+    "General validation errors"
+    generalErrors: [Commerce_Cart_Form_Error!]
+}
+
+type Commerce_Cart_Form_Error {
+    "A key of the error message. Often used for translation"
+    messageKey: String!
+    "A speaking error label. Often used to show to end user - in case no translation exists"
+    defaultLabel: String!
+}
+
+type Commerce_Cart_Form_FieldError {
+    "A key of the error message. Often used for translation"
+    messageKey: String!
+    "A speaking error label. Often used to show to end user - in case no translation exists"
+    defaultLabel: String!
+    "Identifier for a form field"
+    fieldName: String!
+}
+
+type Commerce_Cart_AddressForm {
+    vat:                    String!
+    firstname:              String!
+    lastname:               String!
+    middleName:             String!
+    title:                  String!
+    salutation:             String!
+    street:                 String!
+    streetNr:               String!
+    addressLine1:           String!
+    addressLine2:           String!
+    company:                String!
+    city:                   String!
+    postCode:               String!
+    state:                  String!
+    regionCode:             String!
+    country:                String!
+    countryCode:            String!
+    phoneNumber:            String!
+    email:                  String!
+}
+
+input Commerce_Cart_AddressFormInput {
+    vat:                    String
+    firstname:              String!
+    lastname:               String!
+    middleName:             String
+    title:                  String
+    salutation:             String
+    street:                 String
+    streetNr:               String
+    addressLine1:           String
+    addressLine2:           String
+    company:                String
+    city:                   String
+    postCode:               String
+    state:                  String
+    regionCode:             String
+    country:                String
+    countryCode:            String
+    phoneNumber:            String
+    email:                  String!
+}
+
+input Commerce_Cart_DeliveryAddressInput {
+    "Unique delivery code to identify the delivery"
+    deliveryCode: String!
+    "Delivery address form data"
+    deliveryAddress: Commerce_Cart_AddressFormInput
+    "Should the data of the billing address be used for this delivery"
+    useBillingAddress: Boolean!
+    "Optional Shipping Method"
+    method: String
+    "Optional Shipping Method"
+    carrier: String
+    "Optional desired delivery date / time"
+    desiredTime: Time
+}
+
+type Commerce_Cart_DeliveryAddressForm {
+    "Unique delivery code to identify the delivery"
+    deliveryCode: String!
+    "Delivery address form data"
+    formData:       Commerce_Cart_AddressForm
+    "Shows if the data of the billing address should be used for this delivery"
+    useBillingAddress: Boolean!
+    "Shipping Method"
+    method: String
+    "Shipping Carrier"
+    carrier: String
+    "Optional desired delivery date / time"
+    desiredTime: Time
+
+    "Validation of supplied delivery address, empty if address is valid"
+    validationInfo: Commerce_Cart_Form_ValidationInfo
+    "Shows if the request was successfully processed"
+    processed: Boolean
+}
+
+type Commerce_Cart_UpdateDeliveryShippingOptions_Result {
+    "Shows if the request was successfully processed"
+    processed: Boolean
+}
+
+input Commerce_Cart_DeliveryShippingOptionInput {
+    "Unique delivery code to identify an **existing** delivery"
+    deliveryCode: String!
+    "Shipping Method"
+    method: String!
+    "Shipping Carrier"
+    carrier: String!
+}
+
+input Commerce_Cart_KeyValueInput {
+    key: String!
+    value: String!
+}
+
+input Commerce_Cart_DeliveryAdditionalDataInput {
+    deliveryCode: String!
+    additionalData: [Commerce_Cart_KeyValueInput!]!
+}
+
+extend type Query {
+    Commerce_Cart_DecoratedCart: Commerce_Cart_DecoratedCart!
+    Commerce_Cart_Validator: Commerce_Cart_ValidationResult!
+    "Commerce_Cart_QtyRestriction returns if the product is restricted in terms of the allowed quantity for the current cart and the given delivery"
+    Commerce_Cart_QtyRestriction(marketplaceCode: String!, variantCode: String, deliveryCode: String!): Commerce_Cart_QtyRestrictionResult!
+}
+
+extend type Mutation {
+    Commerce_Cart_AddToCart(marketplaceCode: ID!, qty: Int!, deliveryCode: String!): Commerce_Cart_DecoratedCart!
+    Commerce_Cart_DeleteCartDelivery(deliveryCode: String!): Commerce_Cart_DecoratedCart!
+    Commerce_Cart_DeleteItem(itemID: ID!, deliveryCode: String!): Commerce_Cart_DecoratedCart!
+    Commerce_Cart_UpdateItemQty(itemID: ID!, deliveryCode: String!, qty: Int!): Commerce_Cart_DecoratedCart!
+    "Adds/Updates the Billing Address of the current cart"
+    Commerce_Cart_UpdateBillingAddress(addressForm: Commerce_Cart_AddressFormInput): Commerce_Cart_BillingAddressForm!
+    Commerce_Cart_UpdateSelectedPayment(gateway: String!, method: String!): Commerce_Cart_SelectedPaymentResult!
+    Commerce_Cart_ApplyCouponCodeOrGiftCard(code: String!): Commerce_Cart_DecoratedCart
+    Commerce_Cart_RemoveGiftCard(giftCardCode: String!): Commerce_Cart_DecoratedCart
+    Commerce_Cart_RemoveCouponCode(couponCode: String!): Commerce_Cart_DecoratedCart
+    "Adds/Updates one/multiple Delivery Addresses"
+    Commerce_Cart_UpdateDeliveryAddresses(deliveryAdresses: [Commerce_Cart_DeliveryAddressInput!]): [Commerce_Cart_DeliveryAddressForm]!
+    "Adds/Updates one/multiple Delivery Addresses"
+    Commerce_Cart_UpdateDeliveryShippingOptions(shippingOptions: [Commerce_Cart_DeliveryShippingOptionInput!]): Commerce_Cart_UpdateDeliveryShippingOptions_Result!
+    "Cleans current cart"
+    Commerce_Cart_Clean: Boolean!
+    "Adds/Updates additional data for the cart"
+    Commerce_Cart_UpdateAdditionalData(additionalData: [Commerce_Cart_KeyValueInput!]!): Commerce_Cart_DecoratedCart!
+    "Adds/Updates additional data for the given deliveries"
+    Commerce_Cart_UpdateDeliveriesAdditionalData(data: [Commerce_Cart_DeliveryAdditionalDataInput!]!): Commerce_Cart_DecoratedCart!
+}

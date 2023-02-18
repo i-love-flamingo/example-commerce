@@ -1,0 +1,130 @@
+input Commerce_Search_KeyValueFilter {
+    k: String!
+    v: [String!]
+}
+
+input Commerce_Search_Request {
+    pageSize:           Int
+    page:               Int
+    sortBy:             String
+    keyValueFilters:    [Commerce_Search_KeyValueFilter!]
+    query:              String
+}
+
+#input Commerce_Search_LiveSearchRequest {
+#    query:              String
+#}
+
+type Commerce_Search_Meta {
+    query:          String!
+    originalQuery:  String!
+    page:           Int!
+    numPages:       Int!
+    numResults:     Int!
+    sortOptions:    [Commerce_Search_SortOption!]
+}
+
+type Commerce_Search_SortOption {
+    label: String!
+    field: String!
+    selected: Boolean!
+}
+
+interface Commerce_Search_Facet {
+    name: String!
+    label: String!
+    position: Int!
+    items: [Commerce_Search_FacetItem!]!
+    hasSelectedItem: Boolean!
+}
+
+interface Commerce_Search_FacetItem {
+    label: String!
+    value: String!
+    selected: Boolean!
+    count: Int!
+}
+
+type Commerce_Search_ListFacet implements Commerce_Search_Facet {
+    name: String!
+    label: String!
+    position: Int!
+    items: [Commerce_Search_ListFacetItem!]!
+    hasSelectedItem: Boolean!
+}
+
+type Commerce_Search_ListFacetItem implements Commerce_Search_FacetItem {
+    label: String!
+    value: String!
+    selected: Boolean!
+    count: Int!
+}
+
+type Commerce_Search_TreeFacet implements Commerce_Search_Facet {
+    name: String!
+    label: String!
+    position: Int!
+    items: [Commerce_Search_TreeFacetItem!]!
+    hasSelectedItem: Boolean!
+}
+
+type Commerce_Search_TreeFacetItem implements Commerce_Search_FacetItem {
+    label: String!
+    value: String!
+    selected: Boolean!
+    count: Int!
+    active: Boolean!
+    items: [Commerce_Search_TreeFacetItem!]
+}
+
+type Commerce_Search_RangeFacet implements Commerce_Search_Facet {
+    name: String!
+    label: String!
+    position: Int!
+    items: [Commerce_Search_RangeFacetItem!]!
+    hasSelectedItem: Boolean!
+}
+
+type Commerce_Search_RangeFacetItem implements Commerce_Search_FacetItem {
+    label: String!
+    value: String!
+    selected: Boolean!
+    count: Int!
+    min: Int!
+    max: Int!
+    selectedMin: Int!
+    selectedMax: Int!
+}
+
+type Commerce_Search_Suggestion {
+    text:      String!
+    highlight: String!
+}
+
+type Commerce_Search_Promotion {
+    title: String!
+    content: String!
+    url: String!
+    media: Commerce_Search_PromotionMedia
+}
+
+type Commerce_Search_PromotionMedia {
+    type:      String!
+    mimeType:  String!
+    usage:     String!
+    title:     String!
+    reference: String!
+}
+
+#type Commerce_Search_Result {
+#    hits: []Commerce_Search_Document  / Or maybe we dont need hits and the modules need to add a edge to this object... we will see
+#    searchMeta:     Commerce_Search_Meta!
+    # Facets: domain.FacetCollection
+#    suggestions:    [Commerce_Search_Suggestion]
+#}
+
+
+#extend type Query {
+#    Commerce_Search(searchRequest: Commerce_Search_Request): Commerce_Search_Result
+#    Commerce_Search_LiveSearch(searchRequest: Commerce_Search_LiveSearchRequest): Commerce_Search_ResultCommerce_Search_LiveSearchRequest!
+#}
