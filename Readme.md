@@ -329,7 +329,7 @@ query productssimple {
 And to add this procust to the cart:
 ```graphql
 mutation addToCart {
-  Commerce_Cart_AddToCart(marketplaceCode: "fake_simple", qty: 1, deliveryCode: "delivery") {
+  Commerce_Cart_AddToCart(addToCartInput: {marketplaceCode: "fake_simple", qty: 1, deliveryCode: "delivery"}) {
     cart {
       id
       deliveries {
